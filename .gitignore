@@ -1,0 +1,22 @@
+# Python cache
+**/__pycache__/
+*.pyc
+
+# Environments
+.venv/
+venv/
+.env/
+env/
+
+# Django secrets ignore all .env files like (.env, .env.local, .env.prod, .etc)
+*.env
+
+# logs ingnore all log files
+*.log
+
+# database
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db
