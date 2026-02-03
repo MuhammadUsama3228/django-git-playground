@@ -2,64 +2,64 @@
 {% load static %}
 
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-box">
-        <div class="brand-badge">2FA</div>
+    <div class="auth-wrapper">
+        <div class="auth-box">
+            <div class="brand-badge">2FA</div>
 
-        <h2>Set Up Multi-Factor Authentication</h2>
-        <p>
-            Scan the QR code below using your authenticator app (like Google Authenticator or Authy),
-            then enter the generated code to complete setup.
-        </p>
+            <h2>Set Up Multi-Factor Authentication</h2>
+            <p>
+                Scan the QR code below using your authenticator app (like Google Authenticator or Authy),
+                then enter the generated code to complete setup.
+            </p>
 
-        <div class="qr-code-container">
-            <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code" class="qr-code" />
+            <div class="qr-code-container">
+                <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code" class="qr-code"/>
+            </div>
+
+            <form method="post" action="{% url 'admin_auth-generate-qr_code' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-submit">I have scanned the QR code</button>
+            </form>
         </div>
-
-        <form method="post" action="{% url 'admin-generate-qr_code' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn-submit">I have scanned the QR code</button>
-        </form>
     </div>
-</div>
 {% endblock %}
 
 {% block extrahead %}
-<link rel="stylesheet" type="text/css" href="{% static 'admin/login_and_2fa.css' %}">
-<style>
-/* QR Section */
-.qr-code-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 24px 0;
-}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login_and_2fa.css' %}">
+    <style>
+        /* QR Section */
+        .qr-code-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 24px 0;
+        }
 
-.qr-code {
-    width: 180px;
-    height: 180px;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 10px;
-    background-color: var(--body-bg);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            background-color: var(--body-bg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-.qr-code:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
+        .qr-code:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
 
-/* Adjust text */
-.auth-box h2 {
-    font-size: 1.6rem;
-    margin-bottom: 8px;
-}
+        /* Adjust text */
+        .auth-box h2 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
 
-.auth-box p {
-    color: var(--body-medium-color);
-    margin-bottom: 24px;
-    line-height: 1.5;
-}
-</style>
+        .auth-box p {
+            color: var(--body-medium-color);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+    </style>
 {% endblock %}

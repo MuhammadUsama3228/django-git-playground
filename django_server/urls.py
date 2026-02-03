@@ -31,14 +31,14 @@ server_urls = [
     path("healthz/", health_check_view, name="healthz"),
 ]
 admin_urls = [
-    path("admin/login/", AdminLoginView.as_view(), name="admin-login"),
-    path("admin/generate_qr_code/", AdminGenerateQRCodeView.as_view(), name="admin-generate-qr_code"),
-    path("admin/verify_otp/", AdminVerifyOTPView.as_view(), name="admin-verify-otp"),
+    path("login/", AdminLoginView.as_view(), name="admin-login"),
+    path("generate_qr_code/", AdminGenerateQRCodeView.as_view(), name="admin-generate-qr_code"),
+    path("verify_otp/", AdminVerifyOTPView.as_view(), name="admin-verify-otp"),
 ]
 
 urlpatterns = [
     path("", include(server_urls)),
     path("api/auth/", include("authentication.urls")),
-    path("admin/", include((admin_urls, "admin_auth"))),
+    path("admin/", include(admin_urls)),
     path("admin/", admin.site.urls),
 ]
