@@ -1,11 +1,17 @@
-from rest_framework import generics, status
-from rest_framework.response import Response
-from .serializers import RegisterSerializer, LoginSerializer, UserSerializer, ResetPasswordSerializer
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.views import APIView
 from django.contrib.auth import logout
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from rest_framework import generics, status
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from ..serializers import (
+    LoginSerializer,
+    RegisterSerializer,
+    ResetPasswordSerializer,
+    UserSerializer,
+)
+from ..utils.commons import verify_otp
 
 
 class RegisterView(generics.CreateAPIView):
@@ -17,10 +23,15 @@ class RegisterView(generics.CreateAPIView):
         if serializer.is_valid():
             user = serializer.save()
             token = Token.objects.create(user=user)
-            return Response({
-                "user": UserSerializer(user, context=self.get_serializer_context()).data,
-                "token": token.key
-            }, status=status.HTTP_201_CREATED)
+            return Response(
+                {
+                    "user": UserSerializer(
+                        user, context=self.get_serializer_context()
+                    ).data,
+                    "token": token.key,
+                },
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -31,21 +42,25 @@ class LoginView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            user = serializer.validated_data['user']
+            user = serializer.validated_data["user"]
             token = Token.objects.get_or_create(user=user)[0]
 
             if not user.is_two_factor_enabled:
-                return Response({
-                    "requires_2fa_setup": True,
-                    "token": token.key,
-
-                }, status=status.HTTP_200_OK)
-
+                return Response(
+                    {
+                        "requires_2fa_setup": True,
+                        "token": token.key,
+                    },
+                    status=status.HTTP_200_OK,
+                )
             else:
-                return Response({
-                    "requires_2fa_verification": True,
-                    "token": token.key,
-                }, status=status.HTTP_200_OK)
+                return Response(
+                    {
+                        "requires_2fa_verification": True,
+                        "token": token.key,
+                    },
+                    status=status.HTTP_200_OK,
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -54,12 +69,13 @@ class ResetPasswordView(APIView):
     serializer_class = ResetPasswordSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {"message": "Password reset successfully."},
-                status=status.HTTP_200_OK
+                {"message": "Password reset successfully."}, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -89,10 +105,7 @@ class GenerateQRCodeView(APIView):
         device, created = TOTPDevice.objects.get_or_create(user=user, confirmed=False)
         qr_code_url = device.config_url
 
-        return Response(
-            {"qr_code_url": qr_code_url},
-            status=status.HTTP_200_OK
-        )
+        return Response({"qr_code_url": qr_code_url}, status=status.HTTP_200_OK)
 
 
 class VerifyOTPView(APIView):
@@ -100,27 +113,28 @@ class VerifyOTPView(APIView):
 
     def post(self, request):
         user = request.user
-        otp_code = request.data.get('otp')
+        otp_code = request.data.get("otp")
 
         try:
-            device = user.totpdevice_set.first()
+            verified, message = verify_otp(user, otp_code)
 
-            if not device:
-                return Response({"error": "No TOTP device found for user."}, status=status.HTTP_400_BAD_REQUEST)
-
-            if device.verify_token(otp_code):
-                device.confirmed = True
-                device.save()
-                user.is_two_factor_enabled = True
-                user.save()
+            if verified:
                 token, _ = Token.objects.get_or_create(user=user)
-                return Response({
-                    "user": UserSerializer(user).data,
-                    "token": token.key,
-                    "message": "Two-factor authentication verification completed."
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {
+                        "user": UserSerializer(user).data,
+                        "token": token.key,
+                        "message": "Two-factor authentication verification completed.",
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            if not verified:
+                return Response(
+                    {"error": f"{message}"}, status=status.HTTP_400_BAD_REQUEST
+                )
         except Exception as e:
             print(f"Error in VerifyOTPView: {str(e)}")
-            return Response({"error": "An error occurred during OTP verification."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": "An error occurred during OTP verification."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

@@ -8,9 +8,9 @@ class PasswordInputFieldWidget(PasswordInput):
 
     def render(self, name, value, attrs=None, renderer=None):
         attrs = attrs or {}
-        attrs.setdefault('type', 'password')
-        attrs.setdefault('name', name)
-        attrs.setdefault('id', f'id_{name}')
+        attrs.setdefault("type", "password")
+        attrs.setdefault("name", name)
+        attrs.setdefault("id", f"id_{name}")
 
         final_attrs = {**self.attrs, **attrs}
 
@@ -24,9 +24,11 @@ class PasswordInputFieldWidget(PasswordInput):
             "dark:focus:group-[.errors]:outline-red-500 dark:scheme-dark "
             "group-[.primary]:border-transparent px-3 py-2 w-full max-w-2xl appearance-none truncate"
         )
-        final_attrs['class'] = base_classes
+        final_attrs["class"] = base_classes
 
-        attr_str = " ".join(f'{key}="{escape(val)}"' for key, val in final_attrs.items())
+        attr_str = " ".join(
+            f'{key}="{escape(val)}"' for key, val in final_attrs.items()
+        )
         html = f"""
             <div id="password-container" class="relative w-full max-w-2xl">
                 <input {attr_str} 

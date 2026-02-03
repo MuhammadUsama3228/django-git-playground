@@ -1,0 +1,44 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/login_and_2fa.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-box">
+        <div class="brand-badge">2FA</div>
+        <h2>Multi-Factor Authentication</h2>
+        <p>Please enter the code from the Authenticator app</p>
+
+        <form method="post" action="{% url 'admin-verify-otp' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_otp_token">Authentication Code</label>
+                {{ form.otp_token }}
+            </div>
+            <button type="submit" class="btn-submit">Verify & Continue</button>
+        </form>
+
+        {% if form.errors %}
+        <div class="error-messages">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <p class="error-text">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const header = document.querySelector('#content h1');
+        if (header) header.style.display = 'none';
+    });
+</script>
+{% endblock %}

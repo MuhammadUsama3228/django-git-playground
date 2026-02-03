@@ -1,11 +1,11 @@
-from .helpers import generate_qr_code, verify_otp
-from .models import User
-from django.views import View
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
-from .forms import AdminAuthenticationFormWithOTP, OTPVerificationForm
-from .mixins import AdminContextMixin
-from .utils import login_user
+from django.shortcuts import redirect, render
+from django.views import View
+from ..forms import AdminAuthenticationFormWithOTP, OTPVerificationForm
+from ..mixins import AdminContextMixin
+from ..models import User
+from ..utils.admin import login_user
+from ..utils.commons import generate_qr_code, verify_otp
 
 
 class AdminLoginView(AdminContextMixin, View):
@@ -15,7 +15,7 @@ class AdminLoginView(AdminContextMixin, View):
         form = AdminAuthenticationFormWithOTP()
         context = self.get_admin_context()
         context["form"] = form
-        context["title"] = 'Login'
+        context["title"] = "Login"
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -30,7 +30,10 @@ class AdminLoginView(AdminContextMixin, View):
                 request.session["pre_2fa_user_id"] = user.id
                 if user.is_staff and user.role not in User.SUPERUSER_ROLES:
                     return login_user(request, user)
-                elif not (user.is_staff and (user.role in User.SUPERUSER_ROLES or user.is_superuser)):
+                elif not (
+                    user.is_staff
+                    and (user.role in User.SUPERUSER_ROLES or user.is_superuser)
+                ):
                     form.add_error(None, "You must be admin to proceed.")
                 elif not user.is_two_factor_enabled:
                     return redirect("admin-generate-qr_code")
@@ -64,7 +67,7 @@ class AdminVerifyOTPView(AdminContextMixin, View):
         form = OTPVerificationForm()
         context = self.get_admin_context()
         context["form"] = form
-        context["title"] = 'Verify OTP'
+        context["title"] = "Verify OTP"
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):

@@ -30,16 +30,14 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-LOCAL_APPS = [
-    'authentication'
-]
+LOCAL_APPS = ["authentication"]
 
 THIRD_PARTY_APPS = [
-    'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
-    'django_otp',
-    'django_otp.plugins.otp_totp',
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
 ]
 
 DEFAULT_APPS = [
@@ -51,7 +49,11 @@ DEFAULT_APPS = [
     "django.contrib.staticfiles",
 ]
 
-INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = (
+    *DEFAULT_APPS,
+    *THIRD_PARTY_APPS,
+    *LOCAL_APPS
+)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -68,10 +70,11 @@ ROOT_URLCONF = "django_server.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [BASE_DIR / 'templates',],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                'django.template.context_processors.debug',
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -80,6 +83,7 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = "authentication.User"
 WSGI_APPLICATION = "django_server.wsgi.application"
 
 
@@ -132,7 +136,7 @@ STATIC_URL = "static/"
 
 
 # App settings
-APP_TITLE = 'Git Playground'.title()
+APP_TITLE = "Git Playground".title()
 ADMIN_SITE_HEADER = f"{APP_TITLE} Administration"
 ADMIN_SITE_TITLE = f"{APP_TITLE} Portal"
 ADMIN_INDEX_TITLE = f"Welcome to the {APP_TITLE} Administration"

@@ -1,0 +1,50 @@
+{% extends "admin/base_site.html" %}
+
+{% load static %}
+
+{% block content %}
+    <div class="login-wrapper">
+        <div class="login-box">
+            <h1>Park Guard Admin</h1>
+            <p>Please log in to access the admin panel.</p>
+
+            <form method="post" action="{% url 'admin-login' %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username">Username:</label>
+                    <input type="text" name="username" id="id_username" required class="input-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">Password:</label>
+                    <input type="password" name="password" id="id_password" required class="input-field">
+                </div>
+
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+
+            {% if form.errors %}
+                <div class="error-messages">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="error-text">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.querySelector('#content h1');
+            if (header) {
+                header.style.display = 'none';
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/login_and_2fa.css' %}">
+{% endblock %}
