@@ -16,7 +16,7 @@
                 <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code" class="qr-code"/>
             </div>
 
-            <form method="post" action="{% url 'admin_auth-generate-qr_code' %}">
+            <form method="post" action="{% url 'admin-generate-qr_code' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-submit">I have scanned the QR code</button>
             </form>

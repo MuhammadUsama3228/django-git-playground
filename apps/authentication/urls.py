@@ -1,6 +1,6 @@
-from django.urls import include, path
+from django.urls import path
 
-from authentication.views.api_views import (
+from apps.authentication.views.api_views import (
     GenerateQRCodeView,
     LoginView,
     LogoutView,

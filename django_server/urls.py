@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from authentication.views.admin_views import (
+from apps.authentication.views.admin_views import (
     AdminLoginView,
     AdminGenerateQRCodeView,
     AdminVerifyOTPView,
@@ -38,7 +38,7 @@ admin_urls = [
 
 urlpatterns = [
     path("", include(server_urls)),
-    path("api/auth/", include("authentication.urls")),
+    path("api/auth/", include("apps.authentication.urls")),
     path("admin/", include(admin_urls)),
     path("admin/", admin.site.urls),
 ]

@@ -14,7 +14,7 @@
             <h2>Multi-Factor Authentication</h2>
             <p>Please enter the code from the Authenticator app</p>
 
-            <form method="post" action="{% url 'admin_auth-verify-otp' %}">
+            <form method="post" action="{% url 'admin-verify-otp' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="id_otp_token">Authentication Code</label>

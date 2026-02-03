@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 LOCAL_APPS = [
-    "authentication",
+    "apps.authentication",
 ]
 
 THIRD_PARTY_APPS = [
