@@ -9,7 +9,9 @@ venv/
 env/
 
 # Django secrets ignore all .env files like (.env, .env.local, .env.prod, .etc)
-*.env
+.env
+*.env.*
+!.env.example
 
 # logs ingnore all log files
 *.log
