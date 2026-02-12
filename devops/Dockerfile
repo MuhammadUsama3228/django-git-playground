@@ -1,21 +1,19 @@
 FROM python:3.12-alpine
 
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONNUMBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app/
+WORKDIR /app
 
-COPY requirements.txt /app/
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app/
+COPY . .
 
-# container port
+COPY devops/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 8000
 
-COPY devops/entrypoint.sh /app/
-
-RUN chmod +x /app/entrypoint.sh
-
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

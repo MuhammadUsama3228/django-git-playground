@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+
+  postgres-db:
+    image: postgres:14.0
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - playground
+
+  backend:
+    build:
+      context: ..
+      dockerfile: devops/Dockerfile
+    image: playground-djnago-image:latest
+    container_name: backend-server
+    restart: unless-stopped
+    volumes:
+      - ../:/app
+      - django_static:/app/staticfiles
+    ports:
+      - "8000:8000"
+    environment:
+      APP_TITLE: ${APP_TITLE}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      TIME_ZONE: ${TIME_ZONE}
+      STATICFILES_ROOT: /app/staticfiles
+      DB_ENGINE: ${DB_ENGINE}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+    networks:
+      - playground
+
+volumes:
+  postgres_data:
+  django_static:
+
+networks:
+  playground:
