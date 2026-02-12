@@ -101,7 +101,7 @@ WSGI_APPLICATION = "django_server.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / env('DB_NAME', default='db.sqlite3'),
     }
 }
 
@@ -142,7 +142,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / env('STATICFILES_ROOT', default='staticfiles')
 
 # App settings
 APP_TITLE = env.str('APP_TITLE', default='Git Playgrund').title()
