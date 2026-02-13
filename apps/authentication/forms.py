@@ -20,6 +20,9 @@ class AdminUserCreationForm(UserCreationForm):
         username = self.cleaned_data["username"]
         return username.lower()
 
+    def clean_email(self):
+        return self.cleaned_data.get('email').lower()
+
 
 class AdminAuthenticationFormWithOTP(forms.Form):
     username = forms.CharField(

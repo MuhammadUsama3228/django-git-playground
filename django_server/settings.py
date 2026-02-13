@@ -100,12 +100,12 @@ WSGI_APPLICATION = "django_server.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': f'django.db.backends.{env('DB_ENGINE')}',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST', default='localhost'),
-        'PORT': env('DB_PORT', default=5432),
+        'ENGINE': f'django.db.backends.{env('DB_ENGINE', default='sqlite3')}',
+        'NAME': env('DB_NAME', default='db.sqlite3'),
+        # 'USER': env('DB_USER'),
+        # 'PASSWORD': env('DB_PASSWORD'),
+        # 'HOST': env('DB_HOST', default='localhost'),
+        # 'PORT': env('DB_PORT', default=5432),
     }
 }
 
@@ -127,6 +127,16 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
 
 
 # Internationalization
