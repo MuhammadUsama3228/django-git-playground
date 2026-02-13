@@ -102,13 +102,14 @@ DATABASES = {
     'default': {
         'ENGINE': f'django.db.backends.{env('DB_ENGINE', default='sqlite3')}',
         'NAME': env('DB_NAME', default='db.sqlite3'),
-        # 'USER': env('DB_USER'),
-        # 'PASSWORD': env('DB_PASSWORD'),
-        # 'HOST': env('DB_HOST', default='localhost'),
-        # 'PORT': env('DB_PORT', default=5432),
     }
 }
 
+if env('DB_ENGINE') == 'postgres':
+    DATABASES['default']['USER'] = env('DB_USER')
+    DATABASES['default']['PASSWORD'] = env('DB_PASSWORD')
+    DATABASES['default']['HOST'] = env('DB_HOST')
+    DATABASES['default']['PORT'] = env('DB_PORT')
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
